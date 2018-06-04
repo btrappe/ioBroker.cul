@@ -28,6 +28,8 @@ try {
 
 adapter.on('stateChange', function (id, state) {
     //if (cul) cul.cmd();
+    adapter.log.info('stateChange ' + id + ' '  +  JSON.stringify(state) + "\n");
+
 });
 
 adapter.on('unload', function (callback) {
@@ -50,6 +52,7 @@ adapter.on('ready', function () {
             adapter.log.error('Cannot open port: ' + err);
         }
     });
+    adapter.subscribeStates('*');
 });
 
 adapter.on('message', function (obj) {
@@ -192,6 +195,16 @@ function setStates(obj) {
             }
         }
         tasks.push({type: 'state', id: oid, val: val});
+        if (state === "cmdRaw")
+        {
+            if (val == 0)
+               val = 'false';
+            else if (val == 11)
+               val = 'true';
+
+            if ((val === 'true') || (val === 'false'))
+                tasks.push({type: 'state', id:  adapter.namespace + '.' + id + '.state', val: val});
+        }
     }
     if (isStart) processTasks();
 }
@@ -207,7 +220,7 @@ function connect() {
         host:       adapter.config.ip,
         port:       adapter.config.port,
         debug:      true,
-        logger:     adapter.log.info
+//        logger:     adapter.log.info
     };
 
     cul = new Cul(options);
