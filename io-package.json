@@ -98,7 +98,7 @@
             "common": {},
             "native": {
                 "cmd": {
-                    "type": "number",
+                    "type": "string",
                     "read": true,
                     "write": false,
                     "role": "state"
